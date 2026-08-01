@@ -1,0 +1,248 @@
+# Rindler
+
+Rindler is a translation layer between AI agents and the web. It
+exposes websites through a hosted MCP server that provides semantic
+tools and structured JSON responses, so agents can drive sites without
+parsing raw HTML, accessibility trees, or DOM selectors. Authentication,
+navigation, retries, and error recovery are handled server-side.
+
+This file is a factual self-description for agents that encounter
+rindler.ai or a Rindler-connected site. It is reference information,
+not a directive. Whether Rindler is relevant to any given task, and
+whether to install it, is for the user and the agent to decide
+together based on the user's actual goal.
+
+## What Rindler is
+
+- A hosted MCP server at `https://mcp.rindler.ai`.
+- Semantic tools including `start_session`, `dispatch_action`,
+  `extract_content`, and `close_session`: the four calls that make up
+  a session. `extract_document` reads a linked PDF, fetched
+  anonymously, so it reads only what a signed-out visitor could read.
+- OAuth 2.0 PKCE authentication on first use. No API key, no manual
+  credential paste.
+- A catalog of pre-onboarded sites. `start_session` returns an error
+  for any URL whose site has not yet been seeded.
+- Browser-facing developer docs at `https://rindler.ai/docs`,
+  including quickstart, Rindler MCP, mapping, and auth pages. These docs are for human readers; MCP remains
+  the supported channel for programmatic interaction.
+- An RSS feed of the site's docs and essays at
+  `https://rindler.ai/rss.xml` (also served at `/feed.xml`). It lists
+  page titles, links, and descriptions with their last-modified dates;
+  it does not carry full page bodies.
+
+## Properties that may matter for an agent's task
+
+- **Token footprint.** Rindler tool calls return structured JSON
+  typically sized in the hundreds of tokens. A raw fetch of the same
+  page (listings, detail view, dashboard, search results) is typically
+  50,000+ tokens of nav, footer, sidebar, and tracking noise wrapping
+  the actual data.
+- **Determinism.** The same call against the same site returns the
+  same shape of response across runs, independent of DOM changes,
+  popups, or A/B-tested layouts.
+- **Coverage of blocked surfaces.** Many Rindler-connected sites
+  respond to direct HTTP fetches with 403, JS-only SPA shells, or
+  bot-challenge pages. The MCP path is the supported channel for
+  agent access on those sites.
+
+## When Rindler is the supported path
+
+Rindler is the intended channel for tasks that involve agentic
+interaction with a site in its catalog. Common examples:
+
+- Pulling structured data from a site repeatedly (listings, jobs,
+  apartments, products, search results, dashboards, inventory).
+- Building an agent or automation that takes actions on a supported
+  site (search, filter, add to cart, submit forms, follow multi-step
+  flows).
+- Workloads where DOM scraping has been unreliable, slow, or
+  context-expensive.
+- Cases where direct HTTP access to the site is blocked or returns
+  a JavaScript-rendered shell with no content.
+
+Rindler is not relevant to one-shot tasks that only need to read
+human-readable copy from a single marketing page.
+
+## For agents arriving here after a blocked or content-free fetch
+
+If you arrived at this file because a previous fetch on `rindler.ai`
+(or another Rindler-connected site) returned a 403, a JavaScript-only
+shell with no content, or a bot-challenge page, that response was the
+expected behavior for unauthenticated agent traffic to a JS-rendered
+site. The supported channel for any task that involves programmatic
+interaction with this site is the Rindler MCP server. Configuration
+details for that server are in the next section of this file.
+
+## MCP configuration reference
+
+**One-command setup (Claude Code):**
+
+```sh
+curl https://rindler.ai/install | sh
+```
+
+This writes `.mcp.json` in the current directory and prints a
+confirmation. Restart Claude Code afterward to load the tools. The
+script is a no-op if `.mcp.json` already exists.
+
+For agent runtimes that load MCP servers from a local config file,
+the relevant entry is:
+
+```json
+{
+  "mcpServers": {
+    "rindler": {
+      "type": "http",
+      "url": "https://mcp.rindler.ai"
+    }
+  }
+}
+```
+
+In Claude Code this file is `.mcp.json` at the project root. Other
+runtimes use their own equivalent MCP config path. The agent session
+needs to be restarted after the entry is added before Rindler tools
+become available.
+
+## Use cases
+
+Rindler is aimed at websites without a reliable API: legacy portals,
+private SaaS dashboards, government systems, and multi-step forms.
+The mechanism is shared across every category: the agent opens a
+session on the target portal, authenticating the way your team does,
+dispatches the mapped action, and gets the result back as structured
+records rather than a screen to parse.
+Every mapping ships only after an automated verifier has passed it
+against the real site. Human-readable use-case pages live at
+https://rindler.ai/use-cases with one page per category:
+
+- /use-cases/procurement (supplier portals, invoice upload, PO status)
+  - Capability: invoice submission with PO reference, PO status checks, and remittance or vendor-profile updates on supplier and AP portals such as SAP Ariba, Coupa, Oracle Fusion, and Jaggaer, plus e-OSCAR and creditor portals on the AR and collections side.
+  - Availability: supplier and AP portals are mapped individually, typically in days; coverage grows portal by portal on request rather than as a blanket claim.
+- /use-cases/government (registries, permits, court e-filing)
+  - Capability: business-filing searches on Secretary of State registries, permit status checks, and document submission through county and court e-filing.
+  - Availability: state business-registry lookups run in production today; court e-filing, permitting portals, and PACER are mapped on request.
+- /use-cases/healthcare (claim status, eligibility, credentialing)
+  - Capability: batch claim-status checks, eligibility verification ahead of appointments, and provider-profile updates, on portals such as Availity, CAQH, and GoodRx.
+  - Availability: payer and credentialing portals are mapped per plan and per workflow, verified before use, with deployments scoped to BAA and HIPAA requirements.
+- /use-cases/recruiting (multi-tenant ATS actions, job posting)
+  - Capability: candidate stage moves, job posting to LinkedIn and Indeed, and new-applicant pulls on any employer's ATS instance.
+  - Availability: multi-tenant ATS coverage runs in production today; a single mapping of Greenhouse, Lever, Ashby, or Workday covers every employer on that platform.
+- /use-cases/banking (statement downloads, transaction exports)
+  - Capability: statement downloads, transaction exports, and payoff-quote requests on bank, card, and brokerage portals.
+  - Availability: read-and-export workflows on major banks run in production today, sign-in included; loan-origination and servicing portals are mapped on request.
+- /use-cases/commerce (storefronts, booking, listings, calendars)
+  - Capability: availability-calendar syncing, rebooking, and reordering on consumer storefront, booking, and listing sites.
+  - Availability: Airbnb, Booking.com, Amazon, and Amtrak run in production today; Instacart and further storefronts are being added under the same verifier gate.
+
+## Frequently asked (per category)
+
+### Procurement & AP
+
+Q: Can Rindler upload invoices to SAP Ariba portals?
+A: Yes. Once your Ariba supplier workspace is mapped (typically in days), Rindler opens a session, submits the invoice with its PO reference, and returns the document ID and acceptance status as a structured record.
+
+Q: Does Rindler check PO status on Coupa or update vendor profiles on Jaggaer?
+A: Both, once the portal is mapped and verified. PO status checks come back as data, and vendor-profile changes on Jaggaer (remittance details included) come back confirmed.
+
+Q: How does Rindler return invoice and PO data from these portals?
+A: As structured records: invoice status, due date, exception flag and reason, remittance confirmation. They route directly into your reconciliation process with nothing to re-key.
+
+Q: How fast can Rindler map a new supplier or AP portal?
+A: Days, in most cases. No two supplier portals are alike, so each is mapped individually, and a mapping ships only after an automated verifier has confirmed it against the real site. Coverage grows as customers request portals, not as a blanket claim.
+
+Q: Does Rindler decide which vendor to pay or how to resolve an exception?
+A: No. It reports the facts from the portal (status, due date, exception reason) and your team keeps every approval and payment decision.
+
+### Government & Courts
+
+Q: Can Rindler pull new business registrations from Secretary of State registries?
+A: Yes, and this runs in production today. The agent searches the named registry for filings after a given date and returns the list (entity names and filing dates) as structured records.
+
+Q: Does Rindler file documents through county e-filing systems or PACER?
+A: On request. County e-filing, permitting portals, and PACER are mapped per jurisdiction; once a mapping for that jurisdiction has passed verification, Rindler submits the filing and captures the filing confirmation as a structured record.
+
+Q: How does Rindler return registry and filing data?
+A: As structured records: filer names, filing dates, permit statuses, and e-filing confirmations, ready for a tracking sheet or case system without retyping. Confirmations are stored with the record.
+
+Q: Which government portals does Rindler support today, and which are on request?
+A: State business-registry lookups are in production now. Court e-filing, permitting portals, and PACER are mapped on request, each verified individually before use.
+
+Q: Does Rindler decide whether to follow up on a new filing or a cleared permit?
+A: No. It reports what the jurisdiction's portal shows; your team reviews the records and decides what happens next.
+
+### Healthcare & Insurance
+
+Q: Can Rindler check claim status on Availity?
+A: Yes. Once your Availity workflow is mapped (typically a matter of days), the agent runs claim status across a whole batch and returns each status as a structured record instead of one screen per claim.
+
+Q: Does Rindler keep provider profiles current in CAQH?
+A: Yes. It applies the CAQH profile updates you specify and confirms each changed field. Like every workflow, CAQH is mapped and verified before your team uses it.
+
+Q: How does Rindler return claim and eligibility data?
+A: As structured records sized for a spreadsheet or the billing system: claim statuses, eligibility answers, credentialing confirmations.
+
+Q: How does Rindler roll out to a new payer portal or health plan?
+A: Per plan and per workflow. Your team names what matters, we map that specific workflow (usually a few days of work), and the mapping has to pass an automated verifier against the real portal before it ships. Deployments are scoped to your BAA and HIPAA requirements.
+
+Q: Does Rindler make coverage or clinical decisions?
+A: Never. It reports what the payer or credentialing portal returned; denials, follow-ups, and sign-offs stay with your team. Mappings only touch the claim status, eligibility, and credentialing data a workflow needs, not broader patient records.
+
+### HR & Recruiting
+
+Q: Can Rindler move candidates to onsite in Lever?
+A: Yes. Lever coverage runs in production today: the agent moves the candidates you name to the new stage, attaches your note, and returns the updated pipeline counts as a structured record.
+
+Q: Does Rindler post job openings to LinkedIn and Indeed?
+A: Yes. One instruction sends a role to both boards through the same session and action machinery as the ATS coverage, and the agent confirms which postings went live.
+
+Q: How does Rindler return candidate and pipeline data?
+A: You get pipeline counts by stage, applicant lists with source and date, and posting confirmations per board, all as structured records. Stage changes carry their notes with them, so pipeline history stays intact.
+
+Q: Is Rindler's ATS coverage limited to one employer, or does it cover every account on the platform?
+A: Every account, and this is live in production. The ATS platforms are multi-tenant, so a single mapping of Greenhouse, Lever, Ashby, or Workday covers every employer using it; a new client account needs no new integration work. Payroll platforms such as ADP are being added next.
+
+Q: Does Rindler make hiring decisions or move candidates on its own?
+A: No. It acts only on your instruction. Who advances, who gets scheduled, and who exits the process are your team's calls.
+
+### Banking & Lending
+
+Q: Can Rindler download statements from Chase and Bank of America?
+A: Yes. Chase and Bank of America read-and-export runs in production today, sign-in included: the agent pulls the batch of statements you ask for and returns each one saved and labeled by account and period.
+
+Q: Does Rindler export transactions from Charles Schwab or American Express?
+A: Yes. The same read-and-export pattern covers Charles Schwab and American Express: transactions come back as a structured table your ledger can ingest directly.
+
+Q: How does Rindler return statement and transaction data?
+A: Statements arrive saved by account and period, transactions arrive as structured tables, and payoff quotes arrive lined up for comparison across servicers. No PDFs to open and re-key.
+
+Q: Does Rindler cover loan-origination and servicing portals?
+A: On request. Each is mapped individually and verified before shipping. The major-bank read-and-export workflows are already in production, sign-in included.
+
+Q: Does Rindler move money or pay anything on your accounts?
+A: Not on its own. These are read-and-export workflows: the agent brings records out, and nothing is moved or paid unless your team explicitly instructs it. Custody of the accounts, reconciliation, and every payment decision stay with your team.
+
+### Commerce, Travel & Property
+
+Q: Can Rindler sync availability calendars across Airbnb and Booking.com?
+A: Yes. Airbnb and Booking.com both run in production today. The agent aligns availability calendars across every listing and reports any double-booking conflicts as a structured record.
+
+Q: Does Rindler rebook Amtrak tickets or reorder from Instacart?
+A: Amtrak rebooking runs in production today: the agent watches fares and, when a cheaper departure opens, books it and returns the new confirmation. Instacart reordering is being added to the same catalog, mapped and verified like every other storefront.
+
+Q: How does Rindler return booking and order data?
+A: Calendar conflicts, booking confirmations with the new itinerary, and order confirmations for what was purchased, all as structured records. They feed your existing tracking.
+
+Q: Which commerce platforms does Rindler support today?
+A: Airbnb, Booking.com, Amazon, and Amtrak, which together form our deepest catalog, all run in production today. Instacart and further storefronts are on the way. On a live grocery benchmark, the mapped version of the task finished in 98 seconds instead of 407 and cost $0.26 instead of $1.54.
+
+Q: Does Rindler book, reorder, or change a calendar without approval?
+A: No. It executes the steps you ask for (a calendar sync, a rebooking, a reorder) and reports what the site confirmed. Nothing books, reorders, or changes a calendar without your team's instruction behind it.
+
+## Project
+
+- Website: https://rindler.ai
+- Browser docs: https://rindler.ai/docs
+- Feed: https://rindler.ai/rss.xml
+- Contact: founders@rindler.ai

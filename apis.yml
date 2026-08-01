@@ -1,22 +1,117 @@
 aid: rindler
 name: Rindler
-description: Rindler is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Rindler is a Y Combinator (Summer 2026) company that operates a hosted Model
+  Context Protocol (MCP) server turning any pre-onboarded website — including
+  sites that have no API — into a deterministic, typed set of tools that AI
+  agents can reliably use. Agents open a session against a mapped site, dispatch
+  a semantic action (search, add to cart, submit a form, move a candidate, pull
+  a statement), and receive structured JSON records instead of raw HTML,
+  accessibility trees, or DOM selectors. Rindler handles authentication, 2FA,
+  pop-ups, bot defenses, navigation, retries, and error recovery server-side,
+  and re-verifies each site mapping against the real site before shipping it.
+  It targets legacy portals, private SaaS dashboards, government registries,
+  healthcare/insurance portals, ATS systems, and bank/brokerage sites.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://rindler.ai/logo.png
 url: https://raw.githubusercontent.com/api-evangelist/rindler/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - y-combinator
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: company
+x-tier-reason: enriched-from-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- MCP
+- Model Context Protocol
+- AI Agents
+- Web Automation
+- Browser Automation
+- Structured Data
+- Website to API
+- Agent Tools
+- Y Combinator
+apis:
+- name: Rindler MCP Server
+  description: >-
+    Hosted MCP server (https://mcp.rindler.ai) that exposes mapped websites as
+    deterministic, typed agent tools over HTTP with OAuth 2.0 PKCE. Core tools:
+    start_session, dispatch_action, extract_content, extract_document,
+    close_session.
+  humanURL: https://rindler.ai/docs
+  baseURL: https://mcp.rindler.ai
+  tags:
+  - MCP
+  - AI Agents
+  - Web Automation
+  properties:
+  - type: MCPServer
+    url: mcp/rindler-mcp.yml
+  - type: Authentication
+    url: authentication/rindler-authentication.yml
+  - type: OAuthScopes
+    url: scopes/rindler-scopes.yml
+  - type: Conventions
+    url: conventions/rindler-conventions.yml
+  - type: WellKnown
+    url: well-known/rindler-well-known.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+common:
+- type: DeveloperPortal
+  url: https://rindler.ai/docs
+- type: Documentation
+  url: https://rindler.ai/docs
+- type: GettingStarted
+  url: https://rindler.ai/docs/quickstart
+- type: Pricing
+  url: https://rindler.ai/pricing
+- type: SignUp
+  url: https://chat.rindler.ai/?from=rindler-site
+- type: TermsOfService
+  url: https://rindler.ai/terms
+- type: PrivacyPolicy
+  url: https://rindler.ai/privacy
+- type: Support
+  url: https://rindler.ai/faq
+- type: LLMsTxt
+  url: llms/rindler-llms.txt
+- type: MCPServer
+  url: mcp/rindler-mcp.yml
+- type: Authentication
+  url: authentication/rindler-authentication.yml
+- type: OAuthScopes
+  url: scopes/rindler-scopes.yml
+- type: Conventions
+  url: conventions/rindler-conventions.yml
+- type: WellKnown
+  url: well-known/rindler-well-known.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/rindler-domain-security.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 11
+  pass: local-v1

@@ -1,0 +1,32 @@
+generated: '2026-07-21'
+method: searched
+source: https://rindler.ai/docs/quickstart
+docs: https://rindler.ai/docs/auth
+summary:
+  types: [oauth2]
+  api_key: false
+  oauth2_flows: [authorizationCode]
+  pkce: S256
+  dynamic_client_registration: true
+  client_secret: false
+schemes:
+  - name: OAuth2
+    type: oauth2
+    scheme: authorization_code + PKCE
+    sources: [well-known/rindler-mcp-oauth-authorization-server.json]
+    issuer: https://mcp.rindler.ai
+    authorizationUrl: https://mcp.rindler.ai/auth/authorize
+    tokenUrl: https://mcp.rindler.ai/auth/token
+    registrationUrl: https://mcp.rindler.ai/auth/register-client
+    code_challenge_methods_supported: [S256]
+    grant_types_supported: [authorization_code, refresh_token]
+    response_types_supported: [code]
+    token_endpoint_auth_methods_supported: [none]
+notes: >-
+  Rindler authenticates agents over OAuth 2.0 with PKCE. On first tool call the
+  runtime opens a browser authorization link; the user approves and tokens
+  refresh automatically. There is no API key to paste. The MCP server also
+  supports RFC 7591 dynamic client registration (register-client) and RFC 9728
+  protected-resource metadata. Separately, each mapped site session
+  authenticates to the target portal the way the user's own team does
+  (site-side credentials), handled server-side.

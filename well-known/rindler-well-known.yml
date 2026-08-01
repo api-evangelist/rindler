@@ -1,0 +1,53 @@
+generated: '2026-07-21'
+method: searched
+source: https://mcp.rindler.ai/.well-known/
+notes: >-
+  The rindler.ai marketing host returns its SPA shell (HTTP 200, text/html) for
+  every /.well-known/ path, so those are catch-all responses, not genuine
+  discovery documents, and are not indexed here. The MCP host mcp.rindler.ai
+  serves real OAuth discovery JSON (RFC 8414 + RFC 9728), captured below.
+hosts:
+  - host: https://mcp.rindler.ai
+    documents:
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: application/json
+        file: rindler-mcp-oauth-authorization-server.json
+      - path: /.well-known/oauth-protected-resource
+        status: 200
+        content_type: application/json
+        file: rindler-mcp-oauth-protected-resource.json
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/security.txt
+        status: 404
+      - path: /.well-known/api-catalog
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+  - host: https://rindler.ai
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        content_type: text/html
+        note: SPA catch-all, not a genuine RFC 9116 document
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        content_type: text/html
+        note: SPA catch-all, not genuine
+      - path: /.well-known/openid-configuration
+        status: 200
+        content_type: text/html
+        note: SPA catch-all, not genuine
+      - path: /.well-known/api-catalog
+        status: 200
+        content_type: text/html
+        note: SPA catch-all, not genuine
+      - path: /.well-known/ai-plugin.json
+        status: 200
+        content_type: text/html
+        note: SPA catch-all, not genuine
+      - path: /llms.txt
+        status: 200
+        content_type: text/plain
+        note: genuine llms.txt, captured at llms/rindler-llms.txt

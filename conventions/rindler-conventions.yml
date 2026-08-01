@@ -1,0 +1,41 @@
+generated: '2026-07-21'
+method: searched
+source: https://rindler.ai/docs
+interaction_model:
+  protocol: MCP (Model Context Protocol) over HTTP
+  paradigm: session-based
+  session_lifecycle:
+    - start_session   # open a session against a mapped site URL
+    - dispatch_action # perform a mapped semantic action
+    - extract_content # read structured records from the session
+    - close_session   # end the session
+  determinism: >-
+    The same call against the same mapped site returns the same shape of
+    response across runs, independent of DOM changes, popups, or A/B-tested
+    layouts.
+authentication:
+  agent_to_rindler: OAuth 2.0 PKCE (see authentication/rindler-authentication.yml)
+  rindler_to_site: server-side; each mapped session signs into the target portal as the user's team does
+output:
+  format: structured, typed JSON records
+  philosophy: >-
+    Semantic tools return structured JSON (typically hundreds of tokens) rather
+    than raw HTML / accessibility trees / DOM (which can be 50,000+ tokens of
+    nav/footer/tracking noise).
+error_semantics:
+  unsupported_site: >-
+    start_session returns an unsupported_site error for any URL whose site has
+    not been seeded into the Rindler catalog (rather than attempting raw HTML).
+  blocked_surface: >-
+    Many mapped sites return 403 / JS-only shells / bot-challenge pages to
+    direct fetches; the MCP path is the supported channel on those sites.
+scopes: site:<site>:<capability> (read | write | schema) — see scopes/rindler-scopes.yml
+idempotency:
+  supported: false
+  note: >-
+    Rindler documents no idempotency-key contract; actions are session-scoped
+    and human-approved. Not asserted.
+cross_links:
+  authentication: authentication/rindler-authentication.yml
+  scopes: scopes/rindler-scopes.yml
+  mcp: mcp/rindler-mcp.yml

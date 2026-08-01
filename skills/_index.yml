@@ -1,0 +1,8 @@
+generated: '2026-07-21'
+method: generated
+source: https://rindler.ai/docs/quickstart
+skills:
+  - file: rindler-pull-structured-records.md
+    name: Pull structured records from a mapped site with Rindler
+    api: mcp/rindler-mcp.yml
+    operations: [start_session, dispatch_action, extract_content, close_session]

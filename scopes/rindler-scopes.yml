@@ -1,0 +1,30 @@
+generated: '2026-07-21'
+method: searched
+source: https://mcp.rindler.ai/.well-known/oauth-protected-resource
+docs: https://rindler.ai/docs/auth
+schemes:
+  - name: OAuth2
+    type: oauth2
+    source: https://mcp.rindler.ai/.well-known/oauth-authorization-server
+    flows:
+      - flow: authorizationCode
+        pkce: S256
+        authorizationUrl: https://mcp.rindler.ai/auth/authorize
+        tokenUrl: https://mcp.rindler.ai/auth/token
+        registrationUrl: https://mcp.rindler.ai/auth/register-client
+scopes:
+  - scope: 'site:*:read'
+    description: Read structured content and records from a mapped site session.
+    flows: [authorizationCode]
+    sources: [well-known/rindler-mcp-oauth-protected-resource.json]
+  - scope: 'site:*:write'
+    description: Dispatch mapped write/action operations against a site session (submit forms, add to cart, stage moves, etc.).
+    flows: [authorizationCode]
+    sources: [well-known/rindler-mcp-oauth-protected-resource.json]
+  - scope: 'site:*:schema'
+    description: Access the typed schema/shape of a mapped site's tools and structured outputs.
+    flows: [authorizationCode]
+    sources: [well-known/rindler-mcp-oauth-protected-resource.json]
+notes: >-
+  Scopes use a site:<site>:<capability> pattern; the '*' segment in the
+  advertised scopes_supported denotes the wildcard/all-sites grant surface.
