@@ -6,65 +6,56 @@ server:
   name: rindler
   transport: http
   url: https://mcp.rindler.ai
-  description: >-
-    Hosted MCP server that turns any pre-onboarded website, including sites
-    without an API, into a deterministic, typed set of agent tools. Agents open
-    a session on a mapped site, dispatch a semantic action, and receive
-    structured JSON records instead of raw HTML, accessibility trees, or DOM
-    selectors. Authentication, navigation, retries, and error recovery are
-    handled server-side.
+  description: Hosted MCP server that turns any pre-onboarded website, including sites without an API,
+    into a deterministic, typed set of agent tools. Agents open a session on a mapped site, dispatch a
+    semantic action, and receive structured JSON records instead of raw HTML, accessibility trees, or
+    DOM selectors. Authentication, navigation, retries, and error recovery are handled server-side.
 authentication:
   type: oauth2
   flow: authorization_code + PKCE (S256)
   api_key: false
-  notes: >-
-    First tool call returns an authorization link the runtime opens in the
-    browser; the user approves over OAuth 2.0 PKCE. Tokens refresh
-    automatically. See well-known/rindler-mcp-oauth-authorization-server.json.
+  notes: First tool call returns an authorization link the runtime opens in the browser; the user approves
+    over OAuth 2.0 PKCE. Tokens refresh automatically. See well-known/rindler-mcp-oauth-authorization-server.json.
 install:
   one_command: curl https://rindler.ai/install | sh
   config_file: .mcp.json
-  config: |
-    {
-      "mcpServers": {
-        "rindler": {
-          "type": "http",
-          "url": "https://mcp.rindler.ai"
-        }
-      }
-    }
+  config: "{\n  \"mcpServers\": {\n    \"rindler\": {\n      \"type\": \"http\",\n      \"url\": \"https://mcp.rindler.ai\"\
+    \n    }\n  }\n}\n"
   runtimes:
-    - Claude Code
-    - Claude Desktop
-    - Cursor
-    - Codex
-    - Devin Desktop
+  - Claude Code
+  - Claude Desktop
+  - Cursor
+  - Codex
+  - Devin Desktop
 tools:
-  - name: start_session
-    description: >-
-      Open a structured session against a mapped site URL. Returns an error
-      (unsupported_site) for any URL whose site has not yet been seeded into the
-      Rindler catalog.
-  - name: dispatch_action
-    description: >-
-      Send a mapped semantic action to the connected site (e.g. search, filter,
-      add_to_cart, submit form, follow a multi-step flow) and get a structured
-      record back.
-  - name: extract_content
-    description: Retrieve structured, typed data from the current page/session.
-  - name: extract_document
-    description: >-
-      Read a linked PDF, fetched anonymously — it reads only what a signed-out
-      visitor could read.
-  - name: close_session
-    description: Terminate the structured website session.
+- name: start_session
+  description: Open a structured session against a mapped site URL. Returns an error (unsupported_site)
+    for any URL whose site has not yet been seeded into the Rindler catalog.
+- name: dispatch_action
+  description: Send a mapped semantic action to the connected site (e.g. search, filter, add_to_cart,
+    submit form, follow a multi-step flow) and get a structured record back.
+- name: extract_content
+  description: Retrieve structured, typed data from the current page/session.
+- name: extract_document
+  description: Read a linked PDF, fetched anonymously — it reads only what a signed-out visitor could
+    read.
+- name: close_session
+  description: Terminate the structured website session.
 catalog:
-  model: pre-onboarded sites only; each mapping ships after an automated verifier passes it against the real site
+  model: pre-onboarded sites only; each mapping ships after an automated verifier passes it against the
+    real site
   live_examples:
-    - Airbnb
-    - Booking.com
-    - Amazon
-    - Amtrak
-    - Greenhouse / Lever / Ashby / Workday (multi-tenant ATS)
-    - Chase / Bank of America / Charles Schwab / American Express (read-and-export)
-    - Secretary of State business registries
+  - Airbnb
+  - Booking.com
+  - Amazon
+  - Amtrak
+  - Greenhouse / Lever / Ashby / Workday (multi-tenant ATS)
+  - Chase / Bank of America / Charles Schwab / American Express (read-and-export)
+  - Secretary of State business registries
+deployment:
+  mode: remote
+  endpoint: https://mcp.rindler.ai
+  verified: probed
+  probe: gated
+  checked: '2026-08-12'
+  source: catalog MCP census
