@@ -1,17 +1,14 @@
 aid: rindler
 name: Rindler
-description: >-
-  Rindler is a Y Combinator (Summer 2026) company that operates a hosted Model
-  Context Protocol (MCP) server turning any pre-onboarded website — including
-  sites that have no API — into a deterministic, typed set of tools that AI
-  agents can reliably use. Agents open a session against a mapped site, dispatch
-  a semantic action (search, add to cart, submit a form, move a candidate, pull
-  a statement), and receive structured JSON records instead of raw HTML,
-  accessibility trees, or DOM selectors. Rindler handles authentication, 2FA,
-  pop-ups, bot defenses, navigation, retries, and error recovery server-side,
-  and re-verifies each site mapping against the real site before shipping it.
-  It targets legacy portals, private SaaS dashboards, government registries,
-  healthcare/insurance portals, ATS systems, and bank/brokerage sites.
+description: Rindler is a Y Combinator (Summer 2026) company that operates a hosted Model Context Protocol
+  (MCP) server turning any pre-onboarded website — including sites that have no API — into a deterministic,
+  typed set of tools that AI agents can reliably use. Agents open a session against a mapped site, dispatch
+  a semantic action (search, add to cart, submit a form, move a candidate, pull a statement), and receive
+  structured JSON records instead of raw HTML, accessibility trees, or DOM selectors. Rindler handles
+  authentication, 2FA, pop-ups, bot defenses, navigation, retries, and error recovery server-side, and
+  re-verifies each site mapping against the real site before shipping it. It targets legacy portals, private
+  SaaS dashboards, government registries, healthcare/insurance portals, ATS systems, and bank/brokerage
+  sites.
 deliveryModel:
   model: saas
   open_source: false
@@ -45,7 +42,7 @@ x-tier: company
 x-tier-reason: enriched-from-lead
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-09-16'
 tags:
 - Company
 - MCP
@@ -69,11 +66,9 @@ tags_raw:
 - Y Combinator
 apis:
 - name: Rindler MCP Server
-  description: >-
-    Hosted MCP server (https://mcp.rindler.ai) that exposes mapped websites as
-    deterministic, typed agent tools over HTTP with OAuth 2.0 PKCE. Core tools:
-    start_session, dispatch_action, extract_content, extract_document,
-    close_session.
+  description: 'Hosted MCP server (https://mcp.rindler.ai) that exposes mapped websites as deterministic,
+    typed agent tools over HTTP with OAuth 2.0 PKCE. Core tools: start_session, dispatch_action, extract_content,
+    extract_document, close_session.'
   humanURL: https://rindler.ai/docs
   baseURL: https://mcp.rindler.ai
   tags:
@@ -94,6 +89,8 @@ apis:
   - type: AgentSkill
     url: skills/_index.yml
 common:
+- type: Website
+  url: https://rindler.ai
 - type: DeveloperPortal
   url: https://rindler.ai/docs
 - type: Documentation
