@@ -42,7 +42,7 @@ x-tier: company
 x-tier-reason: enriched-from-lead
 specificationVersion: '0.23'
 created: '2026-07-17'
-modified: '2026-09-16'
+modified: '2026-10-06'
 tags:
 - Company
 - MCP
@@ -89,6 +89,8 @@ apis:
   - type: AgentSkill
     url: skills/_index.yml
 common:
+- url: https://rindler.com/blog
+  type: Blog
 - type: Website
   url: https://rindler.ai
 - type: DeveloperPortal
